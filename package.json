@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "echo:nojekyll": "touch ./docs/.nojekyll",
+    "echo": "npm-run-all -p echo:nojekyll",
+    "copy:html": "cp ./src/index.html ./docs",
+    "copy": "npm-run-all -p copy:*",
+    "watch:js": "webpack --mode development ./src/js/index.js --output ./docs/js/main.js --watch --display minimal",
+    "watch:sass": "node-sass --include-path sass ./src/sass/style.sass ./docs/css/style.css --watch --quiet",
+    "watch:server": "browser-sync start --server ./docs --files \"**/*\"",
+    "watch": "npm-run-all -p watch:*",
+    "start": "npm-run-all -s echo copy watch"
+  },
+  "dependencies": {
+    "@hyperapp/html": "^1.1.1",
+    "axios": "^0.18.0",
+    "hyperapp": "^2.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.3",
+    "node-sass": "^4.11.0",
+    "npm-run-all": "^4.1.5",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.2.0"
+  }
+}
