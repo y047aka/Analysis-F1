@@ -155,18 +155,20 @@ viewTopPage =
             , "04_Azerbaijan"
             , "05_Spain"
             , "06_Monaco"
+            , "07_Canada"
+            , "08_France"
+            , "09_Austria"
+            , "12_Hungary"
             ]
 
-        viewListItem =
-            \raceName ->
-                li []
-                    [ a [ href raceName ] [ text raceName ]
-                    ]
+        viewListItem raceName =
+            li []
+                [ a [ href raceName ] [ text raceName ]
+                ]
     in
     node "main"
         []
-        [ ul []
-            (List.map viewListItem races)
+        [ ul [] (races |> List.map viewListItem)
         ]
 
 
@@ -175,12 +177,13 @@ viewPostPage analysis =
     node "main"
         []
         [ article []
-            [ section [ class "laptime-chart-by-driver" ]
-                [ h1 [] [ text analysis.eventName ]
+            [ h1 [] [ text analysis.eventName ]
+            , section [ class "laptime-charts-by-driver" ]
+                [ h1 [] [ text "Lap Time Charts By Driver" ]
                 , viewLapTimeChartsByDriver analysis
                 ]
-            , section []
-                [ h1 [] [ text analysis.eventName ]
+            , section [ class "laptime-chart" ]
+                [ h1 [] [ text "Lap Time Chart" ]
                 , viewLapTimeChart analysis
                 ]
             ]

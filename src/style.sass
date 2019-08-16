@@ -68,12 +68,6 @@ main
   border-top: solid 0.1rem #EEE
   border-bottom: solid 0.1rem #EEE
 
-  section
-    padding: 3rem 0 4rem
-
-    & + section
-      border-top: solid 0.1rem #EEE
-
   h1
     padding: 1rem 0
     font-size: 2rem
@@ -89,8 +83,19 @@ main
     li
       line-height: 2.6rem
 
+section
+  padding: 3rem 0 4rem
 
-section.laptime-chart-by-driver
+  & + section
+    border-top: solid 0.1rem #EEE
+
+  h1
+    padding: 1rem 0 2rem
+    font-size: 1.6rem
+    font-weight: bold
+    text-transform: uppercase
+
+section.laptime-charts-by-driver
   ul
     display: grid
     grid-template-columns: 1fr 1fr 1fr 1fr
