@@ -1,0 +1,122 @@
+body, header, footer, ul, li
+  margin: 0
+  padding: 0
+  line-height: 1.0
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", YuGothic, "ヒラギノ角ゴ ProN W3", Hiragino Kaku Gothic ProN, Arial, "メイリオ", Meiryo, sans-serif
+
+h1, h2, h3, h4, p
+  margin: 0
+  padding: 0
+  font-weight: normal
+
+html
+  font-size: 62.5%
+
+body
+  display: grid
+  grid-template-rows: auto auto auto
+  font-size: 1.6rem
+  color: #333
+
+  @media screen and (max-width: 479px)
+    grid-template-columns: 1.5rem 1fr 1.5rem
+
+  @media screen and (min-width: 480px) and (max-width: 1279px)
+    grid-template-columns: 1fr 75% 1fr
+
+  @media screen and (min-width: 1280px)
+    grid-template-columns: 1fr 90% 1fr
+
+  & > header.site-header
+    grid-row: 1
+    grid-column: 2
+
+  & > main
+    grid-row: 2
+    grid-column: 2
+
+  & > footer.site-footer
+    grid-row: 3
+    grid-column: 2
+  
+  & > nav.side-nav
+    position: fixed
+    top: 3.5rem
+    right: 3rem
+
+a
+  color: hsl(210, 100%, 40%)
+  text-decoration: none
+
+  &:hover
+    text-decoration: underline
+
+header.site-header
+  padding: 3rem 0 3rem
+
+  h1
+    font-size: 2.5rem
+
+    span
+      padding: 0 1rem
+      font-size: 1.8rem
+
+      &::before
+        content: ": "
+
+main
+  border-top: solid 0.1rem #EEE
+  border-bottom: solid 0.1rem #EEE
+
+  section
+    padding: 3rem 0 4rem
+
+    & + section
+      border-top: solid 0.1rem #EEE
+
+  h1
+    padding: 1rem 0
+    font-size: 2rem
+
+  a
+    color: hsl(210, 100%, 40%)
+    text-decoration: none
+
+  ul
+    padding-left: 2em
+    list-style: square
+
+    li
+      line-height: 2.6rem
+
+svg.laptime-chart
+  background: #F7F7F7
+
+  g.history
+    path
+      fill: none
+      stroke: rgba(0, 0, 0, 0.5)
+
+    text
+      fill: rgba(0, 0, 0, 0.5)
+      font-size: 1.2rem
+
+    g.lap
+      circle
+        fill: rgba(0, 0, 0, 0.5)
+
+      text
+        display: none
+        cursor: default
+        font-size: 0.8rem
+
+      &:hover
+        text
+          display: block
+
+footer.site-footer
+  padding: 3rem 0
+
+  .copyright
+    text-align: right
+    font-size: 1.4rem

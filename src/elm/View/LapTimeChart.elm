@@ -6,7 +6,7 @@ import Path
 import Scale exposing (ContinuousScale)
 import Shape
 import TypedSvg exposing (circle, g, svg, text_)
-import TypedSvg.Attributes exposing (viewBox)
+import TypedSvg.Attributes exposing (class, viewBox)
 import TypedSvg.Attributes.InPx exposing (cx, cy, r, x, y)
 import TypedSvg.Core exposing (Svg)
 
@@ -42,13 +42,13 @@ yScale =
 
 viewLapTimeChart : Analysis -> Html msg
 viewLapTimeChart analysis =
-    svg [ viewBox 0 0 w h ]
+    svg [ viewBox 0 0 w h, class [ "laptime-chart" ] ]
         (analysis.raceHistories |> List.indexedMap viewLapHistory)
 
 
 viewLapHistory : Int -> History -> Html msg
 viewLapHistory i history =
-    g []
+    g [ class [ "history" ] ]
         [ text_ [ x 10, y (toFloat i * 20 + 15) ] [ Html.text history.carNumber ]
         , text_ [ x 35, y (toFloat i * 20 + 15) ] [ Html.text history.driverName ]
         , g [] (history.laps |> List.map viewLapData)
