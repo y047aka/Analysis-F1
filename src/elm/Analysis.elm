@@ -26,6 +26,7 @@ type alias RaceSummary =
 
 type alias Driver =
     { name : String
+    , carNumber : String
     , shortCode : String
     , teamName : String
     , teamColor : String
@@ -70,6 +71,7 @@ driverDecoder : Decode.Decoder Driver
 driverDecoder =
     Decode.succeed Driver
         |> required "driverName" string
+        |> required "car" string
         |> required "driverShortCode" string
         |> required "teamName" string
         |> required "teamColour" string
