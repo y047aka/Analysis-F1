@@ -1,6 +1,6 @@
 module View.LapTimeChart exposing (viewLapTimeChart)
 
-import Analysis exposing (Analysis, History, Lap)
+import Analysis exposing (Analysis, Driver, History, Lap)
 import Html exposing (Html)
 import Path
 import Scale exposing (ContinuousScale)
@@ -42,15 +42,40 @@ yScale =
 
 viewLapTimeChart : Analysis -> Html msg
 viewLapTimeChart analysis =
+    let
+        drivers =
+            analysis.summary.drivers
+
+        histories =
+            analysis.raceHistories
+
+        standings =
+            drivers
+                |> List.map
+                    (\driver ->
+                        let
+                            history =
+                                histories
+                                    |> List.filter (\d -> driver.carNumber == d.carNumber)
+                                    |> List.head
+                                    |> Maybe.withDefault (History "" (Driver "" "" "" "" "") [] [])
+                        in
+                        { driver = driver
+                        , carNumber = history.carNumber
+                        , laps = history.laps
+                        , pitStops = history.pitStops
+                        }
+                    )
+    in
     svg [ viewBox 0 0 w h, class [ "laptime-chart" ] ]
-        (analysis.raceHistories |> List.indexedMap viewLapHistory)
+        (standings |> List.indexedMap viewLapHistory)
 
 
 viewLapHistory : Int -> History -> Html msg
 viewLapHistory i history =
     g [ class [ "history" ] ]
         [ text_ [ x 10, y (toFloat i * 20 + 15) ] [ Html.text history.carNumber ]
-        , text_ [ x 35, y (toFloat i * 20 + 15) ] [ Html.text history.driverName ]
+        , text_ [ x 35, y (toFloat i * 20 + 15) ] [ Html.text history.driver.name ]
         , g [] (history.laps |> List.map viewLapData)
         , drawCurve history.laps
         ]

@@ -1,6 +1,6 @@
 module View.LapTimeChartsByDriver exposing (viewLapTimeChartsByDriver)
 
-import Analysis exposing (Analysis, History, Lap)
+import Analysis exposing (Analysis, Driver, History, Lap)
 import Html exposing (Html, li, p, text, ul)
 import Path
 import Scale exposing (ContinuousScale)
@@ -42,14 +42,38 @@ yScale =
 
 viewLapTimeChartsByDriver : Analysis -> Html msg
 viewLapTimeChartsByDriver analysis =
-    ul []
-        (analysis.raceHistories |> List.map viewLapTimeChart)
+    let
+        drivers =
+            analysis.summary.drivers
+
+        histories =
+            analysis.raceHistories
+
+        standings =
+            drivers
+                |> List.map
+                    (\driver ->
+                        let
+                            history =
+                                histories
+                                    |> List.filter (\d -> driver.carNumber == d.carNumber)
+                                    |> List.head
+                                    |> Maybe.withDefault (History "" (Driver "" "" "" "" "") [] [])
+                        in
+                        { driver = driver
+                        , carNumber = history.carNumber
+                        , laps = history.laps
+                        , pitStops = history.pitStops
+                        }
+                    )
+    in
+    ul [] (standings |> List.map viewLapTimeChart)
 
 
 viewLapTimeChart : History -> Html msg
 viewLapTimeChart history =
     li []
-        [ p [] [ text (history.carNumber ++ " " ++ history.driverName) ]
+        [ p [] [ text (history.carNumber ++ " " ++ history.driver.name) ]
         , svg [ viewBox 0 0 w h ]
             [ g [] (history.laps |> List.map viewLapData)
             , drawCurve history.laps

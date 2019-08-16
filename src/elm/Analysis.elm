@@ -1,9 +1,8 @@
-module Analysis exposing (Analysis, History, Lap, analysisDecoder, getAnalysis, lapDecoder)
+module Analysis exposing (Analysis, Driver, History, Lap, analysisDecoder, getAnalysis, lapDecoder)
 
-import Driver exposing (carNumberToDriverName)
 import Http
 import Json.Decode as Decode exposing (at, float, int, string)
-import Json.Decode.Pipeline exposing (custom, optional, required)
+import Json.Decode.Pipeline exposing (custom, hardcoded, optional, required)
 
 
 
@@ -35,7 +34,7 @@ type alias Driver =
 
 type alias History =
     { carNumber : String
-    , driverName : String
+    , driver : Driver
     , laps : List Lap
     , pitStops : List Int
     }
@@ -79,8 +78,9 @@ driverDecoder =
 
 historyDecoder : Decode.Decoder History
 historyDecoder =
-    Decode.succeed toHistory
+    Decode.succeed History
         |> required "car" string
+        |> hardcoded (Driver "" "" "" "" "")
         |> required "lapTime" (Decode.list lapDecoder)
         |> optional "pit" (Decode.list int) []
 
@@ -90,15 +90,6 @@ lapDecoder =
     Decode.succeed Lap
         |> required "lap" float
         |> required "time" float
-
-
-toHistory : String -> List Lap -> List Int -> History
-toHistory carNumber laps pitStops =
-    { carNumber = carNumber
-    , driverName = carNumberToDriverName carNumber
-    , laps = laps
-    , pitStops = pitStops
-    }
 
 
 
