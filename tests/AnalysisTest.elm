@@ -12,7 +12,7 @@ import Test exposing (Test, describe, test)
    - [ ] Lap型のデコード
        - [x] 文字列：{ \"lap\": 20, \"time\": 90.003 } をデコードすると、Lap型を返す
 
-   - [ ] Car型のデコード
+   - [ ] History型のデコード
 
    - [ ] Analysis型のデコード
 

@@ -1,4 +1,4 @@
-module Analysis exposing (Analysis, Car, Lap, analysisDecoder, getAnalysis, lapDecoder)
+module Analysis exposing (Analysis, History, Lap, analysisDecoder, getAnalysis, lapDecoder)
 
 import Driver exposing (carNumberToDriverName)
 import Http
@@ -12,11 +12,11 @@ import Json.Decode.Pipeline exposing (custom, optional, required)
 
 type alias Analysis =
     { eventName : String
-    , raceHistory : List Car
+    , raceHistories : List History
     }
 
 
-type alias Car =
+type alias History =
     { carNumber : String
     , driverName : String
     , laps : List Lap
@@ -38,12 +38,12 @@ analysisDecoder : Decode.Decoder Analysis
 analysisDecoder =
     Decode.succeed Analysis
         |> custom (Decode.at [ "event", "name" ] Decode.string)
-        |> required "raceHistory" (Decode.list carDecoder)
+        |> required "raceHistory" (Decode.list historyDecoder)
 
 
-carDecoder : Decode.Decoder Car
-carDecoder =
-    Decode.succeed toCar
+historyDecoder : Decode.Decoder History
+historyDecoder =
+    Decode.succeed toHistory
         |> required "car" Decode.string
         |> required "lapTime" (Decode.list lapDecoder)
         |> optional "pit" (Decode.list Decode.int) []
@@ -56,8 +56,8 @@ lapDecoder =
         |> required "time" Decode.float
 
 
-toCar : String -> List Lap -> List Int -> Car
-toCar carNumber laps pitStops =
+toHistory : String -> List Lap -> List Int -> History
+toHistory carNumber laps pitStops =
     { carNumber = carNumber
     , driverName = carNumberToDriverName carNumber
     , laps = laps

@@ -1,6 +1,6 @@
 module View.LapTimeChart exposing (viewLapTimeChart)
 
-import Analysis exposing (Analysis, Car, Lap)
+import Analysis exposing (Analysis, History, Lap)
 import Html exposing (Html)
 import Path
 import Scale exposing (ContinuousScale)
@@ -43,16 +43,16 @@ yScale =
 viewLapTimeChart : Analysis -> Html msg
 viewLapTimeChart analysis =
     svg [ viewBox 0 0 w h ]
-        (analysis.raceHistory |> List.indexedMap viewLapHistory)
+        (analysis.raceHistories |> List.indexedMap viewLapHistory)
 
 
-viewLapHistory : Int -> Car -> Html msg
-viewLapHistory i car =
+viewLapHistory : Int -> History -> Html msg
+viewLapHistory i history =
     g []
-        [ text_ [ x 10, y (toFloat i * 20 + 15) ] [ Html.text car.carNumber ]
-        , text_ [ x 35, y (toFloat i * 20 + 15) ] [ Html.text car.driverName ]
-        , g [] (car.laps |> List.map viewLapData)
-        , drawCurve car.laps
+        [ text_ [ x 10, y (toFloat i * 20 + 15) ] [ Html.text history.carNumber ]
+        , text_ [ x 35, y (toFloat i * 20 + 15) ] [ Html.text history.driverName ]
+        , g [] (history.laps |> List.map viewLapData)
+        , drawCurve history.laps
         ]
 
 
