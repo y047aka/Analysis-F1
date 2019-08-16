@@ -1,21 +1,16 @@
 {
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/y047aka/elm-starfighter.git"
-  },
-  "license": "CC0-1.0",
   "scripts": {
     "clean": "rimraf ./docs ./public",
     "watch:html": "cpx ./src/index.html ./docs -w",
     "watch:assets": "cpx \"./src/assets/**/*\" ./docs/assets -w",
     "watch:js": "cpx ./src/main.js ./docs -w",
-    "watch:elm": "elm-live ./src/Main.elm --open --start-page=index.html --dir=./docs -- --output=./docs/elm.js",
+    "watch:elm": "elm-live ./src/elm/Main.elm --open --start-page=index.html --dir=./docs -- --output=./docs/elm.js",
     "watch:sass": "chokidar ./src/*.scss -c \"sass ./src/style.scss ./docs/style.css --no-source-map\" --initial",
     "watch": "sass ./src/style.scss ./docs/style.css --no-source-map && npm-run-all -p watch:*",
     "compile:html": "cpx ./src/index.html ./public",
     "compile:assets": "cpx \"./src/assets/**/*\" ./public/assets",
     "compile:js": "cpx ./src/main.js ./public",
-    "compile:elm": "elm make ./src/Main.elm --optimize --output=./public/elm.optimized.js",
+    "compile:elm": "elm make ./src/elm/Main.elm --optimize --output=./public/elm.optimized.js",
     "compile:sass": "sass ./src/style.scss ./public/style.css --no-source-map -s compressed",
     "compile": "npm-run-all -p compile:*",
     "minify:elm": "google-closure-compiler --js=./public/elm.optimized.js --js_output_file=./public/elm.js && rm ./public/elm.optimized.js",
