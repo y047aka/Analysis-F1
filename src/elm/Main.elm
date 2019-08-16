@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Analysis exposing (Analysis, getAnalysis)
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (Html, a, article, footer, h1, header, li, node, p, pre, section, text, ul)
@@ -7,6 +8,7 @@ import Html.Attributes exposing (class, href, target)
 import Http
 import Route exposing (Route)
 import Url
+import View.LapTimeChart exposing (viewLapTimeChart)
 
 
 main : Program () Model Msg
@@ -35,7 +37,7 @@ type Page
     = NotFound
     | ErrorPage Http.Error
     | TopPage
-    | AnalysisPage String
+    | AnalysisPage Analysis
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -87,8 +89,8 @@ goTo maybeRoute model =
             ( { model | page = TopPage }, Cmd.none )
 
         Just (Route.Analysis raceName) ->
-            ( { model | page = AnalysisPage raceName }
-            , Cmd.none
+            ( model
+            , raceName |> getAnalysis (Result.map AnalysisPage >> Loaded)
             )
 
 
@@ -111,8 +113,8 @@ view model =
             TopPage ->
                 viewTopPage
 
-            AnalysisPage raceName ->
-                viewPostPage raceName
+            AnalysisPage analysis ->
+                viewPostPage analysis
         , siteFooter
         ]
     }
@@ -167,13 +169,17 @@ viewTopPage =
         ]
 
 
-viewPostPage : String -> Html Msg
-viewPostPage raceName =
+viewPostPage : Analysis -> Html Msg
+viewPostPage analysis =
     node "main"
         []
         [ article []
             [ section []
-                [ h1 [] [ text raceName ]
+                [ h1 [] [ text analysis.eventName ]
+                ]
+            , section []
+                [ h1 [] [ text analysis.eventName ]
+                , viewLapTimeChart analysis
                 ]
             ]
         ]
