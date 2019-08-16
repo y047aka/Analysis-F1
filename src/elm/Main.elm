@@ -9,6 +9,7 @@ import Http
 import Route exposing (Route)
 import Url
 import View.LapTimeChart exposing (viewLapTimeChart)
+import View.LapTimeChartsByDriver exposing (viewLapTimeChartsByDriver)
 
 
 main : Program () Model Msg
@@ -174,8 +175,9 @@ viewPostPage analysis =
     node "main"
         []
         [ article []
-            [ section []
+            [ section [ class "laptime-chart-by-driver" ]
                 [ h1 [] [ text analysis.eventName ]
+                , viewLapTimeChartsByDriver analysis
                 ]
             , section []
                 [ h1 [] [ text analysis.eventName ]
