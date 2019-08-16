@@ -1,17 +1,23 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, a, footer, h1, header, img, li, node, p, section, text, ul)
-import Html.Attributes exposing (class, href, src, target)
+import Browser.Navigation as Nav
+import Html exposing (Html, a, article, footer, h1, header, li, node, p, pre, section, text, ul)
+import Html.Attributes exposing (class, href, target)
+import Http
+import Route exposing (Route)
+import Url
 
 
 main : Program () Model Msg
 main =
-    Browser.element
+    Browser.application
         { init = init
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
+        , onUrlChange = UrlChanged
+        , onUrlRequest = UrlRequested
         }
 
 
@@ -20,15 +26,24 @@ main =
 
 
 type alias Model =
-    { userState : String
+    { key : Nav.Key
+    , page : Page
     }
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( Model ""
-    , Cmd.none
-    )
+type Page
+    = NotFound
+    | ErrorPage Http.Error
+    | TopPage
+    | AnalysisPage String
+
+
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
+    { key = key
+    , page = TopPage
+    }
+        |> goTo (Route.parse url)
 
 
 
@@ -36,73 +51,139 @@ init _ =
 
 
 type Msg
-    = NoOp
+    = UrlRequested Browser.UrlRequest
+    | UrlChanged Url.Url
+    | Loaded (Result Http.Error Page)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
+        UrlRequested urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
+
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+        UrlChanged url ->
+            goTo (Route.parse url) model
+
+        Loaded (Ok page) ->
+            ( { model | page = page }, Cmd.none )
+
+        Loaded (Err error) ->
+            ( { model | page = ErrorPage error }, Cmd.none )
+
+
+goTo : Maybe Route -> Model -> ( Model, Cmd Msg )
+goTo maybeRoute model =
+    case maybeRoute of
+        Nothing ->
+            ( { model | page = NotFound }, Cmd.none )
+
+        Just Route.Top ->
+            ( { model | page = TopPage }, Cmd.none )
+
+        Just (Route.Analysis raceName) ->
+            ( { model | page = AnalysisPage raceName }
+            , Cmd.none
+            )
 
 
 
 -- VIEW
 
 
-view : Model -> Html Msg
+view : Model -> Browser.Document Msg
 view model =
-    node "body"
-        []
+    { title = "Analysis - F1"
+    , body =
         [ siteHeader
-        , node "main"
-            []
-            [ section []
-                [ h1 [] [ text "Elm official..." ]
-                , ul []
-                    [ li []
-                        [ a [ href "https://elm-lang.org", target "_blank" ]
-                            [ text "Elm - A delightful language for reliable webapps" ]
-                        ]
-                    , li []
-                        [ a [ href "https://guide.elm-lang.org", target "_blank" ]
-                            [ text "Introduction · An Introduction to Elm" ]
-                        ]
-                    ]
-                ]
-            , section []
-                [ h1 [] [ text "Community in Japan" ]
-                , ul []
-                    [ li []
-                        [ a [ href "https://elm-lang.jp", target "_blank" ]
-                            [ text "Elm-jp" ]
-                        ]
-                    , li []
-                        [ a [ href "https://guide.elm-lang.jp", target "_blank" ]
-                            [ text "はじめに · An Introduction to Elm" ]
-                        ]
-                    , li []
-                        [ a [ href "http://jinjor-labo.hatenablog.com/entry/2019/02/26/112019", target "_blank" ]
-                            [ text "『基礎からわかる Elm』（Author's post）" ]
-                        ]
-                    ]
-                ]
+        , case model.page of
+            NotFound ->
+                viewNotFound
 
-            -- , img [ src "./assets/images/Elm_logo.png" ] []
-            ]
+            ErrorPage error ->
+                viewError error
+
+            TopPage ->
+                viewTopPage
+
+            AnalysisPage raceName ->
+                viewPostPage raceName
         , siteFooter
         ]
+    }
 
 
 siteHeader : Html Msg
 siteHeader =
-    header [ class "site-header" ]
-        [ h1 [] [ text "elm-stafighter is taking off." ]
+    Html.header [ class "site-header" ]
+        [ h1 []
+            [ a [ href "/" ] [ text "Analysis - F1" ]
+            ]
+        ]
+
+
+viewNotFound : Html Msg
+viewNotFound =
+    text "not found"
+
+
+viewError : Http.Error -> Html Msg
+viewError error =
+    case error of
+        Http.BadBody message ->
+            pre [] [ text message ]
+
+        _ ->
+            text (Debug.toString error)
+
+
+viewTopPage : Html Msg
+viewTopPage =
+    let
+        races =
+            [ "01_Australia"
+            , "02_Bahrain"
+            , "03_China"
+            , "04_Azerbaijan"
+            , "05_Spain"
+            , "06_Monaco"
+            ]
+
+        viewListItem =
+            \raceName ->
+                li []
+                    [ a [ href raceName ] [ text raceName ]
+                    ]
+    in
+    node "main"
+        []
+        [ ul []
+            (List.map viewListItem races)
+        ]
+
+
+viewPostPage : String -> Html Msg
+viewPostPage raceName =
+    node "main"
+        []
+        [ article []
+            [ section []
+                [ h1 [] [ text raceName ]
+                ]
+            ]
         ]
 
 
 siteFooter : Html Msg
 siteFooter =
     footer [ class "site-footer" ]
-        [ p [ class "copyright" ] [ text "© 2019 y047aka" ]
+        [ p [ class "copyright" ]
+            [ text "© 2019 "
+            , a [ href "https://y047aka.me", target "_blank" ] [ text "y047aka" ]
+            ]
         ]
