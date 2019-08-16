@@ -20,6 +20,15 @@ type alias RaceSummary =
     { eventName : String
     , seasonName : String
     , lapTotal : Int
+    , drivers : List Driver
+    }
+
+
+type alias Driver =
+    { name : String
+    , shortCode : String
+    , teamName : String
+    , teamColor : String
     }
 
 
@@ -54,6 +63,16 @@ summaryDecoder =
         |> custom (at [ "event", "name" ] string)
         |> custom (at [ "season", "name" ] string)
         |> required "lapTotal" int
+        |> required "entries" (Decode.list driverDecoder)
+
+
+driverDecoder : Decode.Decoder Driver
+driverDecoder =
+    Decode.succeed Driver
+        |> required "driverName" string
+        |> required "driverShortCode" string
+        |> required "teamName" string
+        |> required "teamColour" string
 
 
 historyDecoder : Decode.Decoder History
