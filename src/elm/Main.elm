@@ -177,7 +177,7 @@ viewPostPage analysis =
     node "main"
         []
         [ article []
-            [ h1 [] [ text analysis.eventName ]
+            [ h1 [] [ text analysis.summary.eventName ]
             , section [ class "laptime-charts-by-driver" ]
                 [ h1 [] [ text "Lap Time Charts By Driver" ]
                 , viewLapTimeChartsByDriver analysis

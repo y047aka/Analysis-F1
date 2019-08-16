@@ -11,9 +11,13 @@ import Json.Decode.Pipeline exposing (custom, optional, required)
 
 
 type alias Analysis =
-    { eventName : String
+    { summary : RaceSummary
     , raceHistories : List History
     }
+
+
+type alias RaceSummary =
+    { eventName : String }
 
 
 type alias History =
@@ -37,8 +41,14 @@ type alias Lap =
 analysisDecoder : Decode.Decoder Analysis
 analysisDecoder =
     Decode.succeed Analysis
-        |> custom (Decode.at [ "event", "name" ] Decode.string)
+        |> custom summaryDecoder
         |> required "raceHistory" (Decode.list historyDecoder)
+
+
+summaryDecoder : Decode.Decoder RaceSummary
+summaryDecoder =
+    Decode.succeed RaceSummary
+        |> custom (Decode.at [ "event", "name" ] Decode.string)
 
 
 historyDecoder : Decode.Decoder History
