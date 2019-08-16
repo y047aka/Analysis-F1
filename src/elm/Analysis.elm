@@ -2,7 +2,7 @@ module Analysis exposing (Analysis, History, Lap, analysisDecoder, getAnalysis, 
 
 import Driver exposing (carNumberToDriverName)
 import Http
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (at, float, int, string)
 import Json.Decode.Pipeline exposing (custom, optional, required)
 
 
@@ -51,24 +51,24 @@ analysisDecoder =
 summaryDecoder : Decode.Decoder RaceSummary
 summaryDecoder =
     Decode.succeed RaceSummary
-        |> custom (Decode.at [ "event", "name" ] Decode.string)
-        |> custom (Decode.at [ "season", "name" ] Decode.string)
-        |> required "lapTotal" Decode.int
+        |> custom (at [ "event", "name" ] string)
+        |> custom (at [ "season", "name" ] string)
+        |> required "lapTotal" int
 
 
 historyDecoder : Decode.Decoder History
 historyDecoder =
     Decode.succeed toHistory
-        |> required "car" Decode.string
+        |> required "car" string
         |> required "lapTime" (Decode.list lapDecoder)
-        |> optional "pit" (Decode.list Decode.int) []
+        |> optional "pit" (Decode.list int) []
 
 
 lapDecoder : Decode.Decoder Lap
 lapDecoder =
     Decode.succeed Lap
-        |> required "lap" Decode.float
-        |> required "time" Decode.float
+        |> required "lap" float
+        |> required "time" float
 
 
 toHistory : String -> List Lap -> List Int -> History
