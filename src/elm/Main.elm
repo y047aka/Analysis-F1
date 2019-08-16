@@ -3,7 +3,7 @@ module Main exposing (main)
 import Analysis exposing (Analysis, getAnalysis)
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, a, article, footer, h1, header, li, node, p, pre, section, text, ul)
+import Html exposing (Html, a, article, footer, h1, header, li, node, p, pre, section, span, text, ul)
 import Html.Attributes exposing (class, href, target)
 import Http
 import Route exposing (Route)
@@ -177,7 +177,10 @@ viewPostPage analysis =
     node "main"
         []
         [ article []
-            [ h1 [] [ text analysis.summary.eventName ]
+            [ h1 []
+                [ span [ class "season" ] [ text analysis.summary.seasonName ]
+                , text analysis.summary.eventName
+                ]
             , section [ class "laptime-charts-by-driver" ]
                 [ h1 [] [ text "Lap Time Charts By Driver" ]
                 , viewLapTimeChartsByDriver analysis

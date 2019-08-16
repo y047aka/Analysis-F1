@@ -17,7 +17,10 @@ type alias Analysis =
 
 
 type alias RaceSummary =
-    { eventName : String }
+    { eventName : String
+    , seasonName : String
+    , lapTotal : Int
+    }
 
 
 type alias History =
@@ -49,6 +52,8 @@ summaryDecoder : Decode.Decoder RaceSummary
 summaryDecoder =
     Decode.succeed RaceSummary
         |> custom (Decode.at [ "event", "name" ] Decode.string)
+        |> custom (Decode.at [ "season", "name" ] Decode.string)
+        |> required "lapTotal" Decode.int
 
 
 historyDecoder : Decode.Decoder History
