@@ -6,7 +6,7 @@ import Path
 import Scale exposing (ContinuousScale)
 import Shape
 import TypedSvg exposing (circle, g, svg, text_)
-import TypedSvg.Attributes exposing (class, viewBox)
+import TypedSvg.Attributes exposing (class, style, viewBox)
 import TypedSvg.Attributes.InPx exposing (cx, cy, r, x, y)
 import TypedSvg.Core exposing (Svg)
 
@@ -76,29 +76,32 @@ viewLapHistory i history =
     g [ class [ "history" ] ]
         [ text_ [ x 10, y (toFloat i * 20 + 15) ] [ Html.text history.carNumber ]
         , text_ [ x 35, y (toFloat i * 20 + 15) ] [ Html.text history.driver.name ]
-        , g [] (history.laps |> List.map viewLapData)
-        , drawCurve history.laps
+        , drawCurve history
+        , g [] (history.laps |> List.map (viewLapData history.driver.teamColor))
         ]
 
 
-viewLapData : Lap -> Svg msg
-viewLapData lap =
+viewLapData : String -> Lap -> Svg msg
+viewLapData color lap =
     let
         dx =
             lap.lapCount |> Scale.convert xScale
 
         dy =
             lap.time |> Scale.convert yScale
+
+        colorSetting =
+            "fill: " ++ color
     in
     g
         [ TypedSvg.Attributes.class [ "lap" ] ]
-        [ circle [ cx dx, cy dy, r 2 ] []
+        [ circle [ cx dx, cy dy, r 2, style colorSetting ] []
         , text_ [ x dx, y dy ] [ Html.text (lap.lapCount |> String.fromFloat) ]
         ]
 
 
-drawCurve : List Lap -> Svg msg
-drawCurve laps =
+drawCurve : History -> Svg msg
+drawCurve history =
     let
         scaleX x =
             x |> Scale.convert xScale
@@ -107,9 +110,12 @@ drawCurve laps =
             y |> Scale.convert yScale
 
         points =
-            laps |> List.map (\lap -> ( scaleX lap.lapCount, scaleY lap.time ))
+            history.laps |> List.map (\lap -> ( scaleX lap.lapCount, scaleY lap.time ))
+
+        colorSetting =
+            "stroke: " ++ history.driver.teamColor
     in
     points
         |> List.map Just
         |> Shape.line Shape.linearCurve
-        |> (\path -> Path.element path [])
+        |> (\path -> Path.element path [ style colorSetting ])

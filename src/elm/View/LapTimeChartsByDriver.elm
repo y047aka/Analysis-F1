@@ -6,7 +6,7 @@ import Path
 import Scale exposing (ContinuousScale)
 import Shape
 import TypedSvg exposing (circle, g, svg)
-import TypedSvg.Attributes exposing (class, viewBox)
+import TypedSvg.Attributes exposing (class, style, viewBox)
 import TypedSvg.Attributes.InPx exposing (cx, cy, r)
 import TypedSvg.Core exposing (Svg)
 
@@ -75,29 +75,32 @@ viewLapTimeChart history =
     li []
         [ p [] [ text (history.carNumber ++ " " ++ history.driver.name) ]
         , svg [ viewBox 0 0 w h ]
-            [ g [] (history.laps |> List.map viewLapData)
-            , drawCurve history.laps
+            [ drawCurve history
+            , g [] (history.laps |> List.map (viewLapData history.driver.teamColor))
             ]
         ]
 
 
-viewLapData : Lap -> Svg msg
-viewLapData lap =
+viewLapData : String -> Lap -> Svg msg
+viewLapData color lap =
     let
         dx =
             lap.lapCount |> Scale.convert xScale
 
         dy =
             lap.time |> Scale.convert yScale
+
+        colorSetting =
+            "fill: " ++ color
     in
     g
         [ TypedSvg.Attributes.class [ "lap" ] ]
-        [ circle [ cx dx, cy dy, r 1.5 ] []
+        [ circle [ cx dx, cy dy, r 1.5, style colorSetting ] []
         ]
 
 
-drawCurve : List Lap -> Svg msg
-drawCurve laps =
+drawCurve : History -> Svg msg
+drawCurve history =
     let
         scaleX x =
             x |> Scale.convert xScale
@@ -106,9 +109,12 @@ drawCurve laps =
             y |> Scale.convert yScale
 
         points =
-            laps |> List.map (\lap -> ( scaleX lap.lapCount, scaleY lap.time ))
+            history.laps |> List.map (\lap -> ( scaleX lap.lapCount, scaleY lap.time ))
+
+        colorSetting =
+            "stroke: " ++ history.driver.teamColor
     in
     points
         |> List.map Just
         |> Shape.line Shape.linearCurve
-        |> (\path -> Path.element path [])
+        |> (\path -> Path.element path [ style colorSetting ])
