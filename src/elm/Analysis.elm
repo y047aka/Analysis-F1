@@ -42,7 +42,7 @@ type alias History =
 
 
 type alias Lap =
-    { lapCount : Float
+    { lapCount : Int
     , time : Float
     }
 
@@ -90,7 +90,7 @@ historyDecoder =
 lapDecoder : Decode.Decoder Lap
 lapDecoder =
     Decode.succeed Lap
-        |> required "lap" float
+        |> required "lap" int
         |> required "time" float
 
 

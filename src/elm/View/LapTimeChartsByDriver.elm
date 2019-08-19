@@ -86,7 +86,7 @@ viewLapData : String -> Lap -> Svg msg
 viewLapData color lap =
     let
         dx =
-            lap.lapCount |> Scale.convert xScale
+            lap.lapCount |> toFloat |> Scale.convert xScale
 
         dy =
             lap.time |> Scale.convert yScale
@@ -104,7 +104,7 @@ drawCurve : History -> Svg msg
 drawCurve history =
     let
         scaleX x =
-            x |> Scale.convert xScale
+            x |> toFloat |> Scale.convert xScale
 
         scaleY y =
             y |> Scale.convert yScale

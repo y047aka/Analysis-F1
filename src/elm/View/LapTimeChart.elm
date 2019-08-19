@@ -86,7 +86,7 @@ viewLapData : String -> Lap -> Svg msg
 viewLapData color lap =
     let
         dx =
-            lap.lapCount |> Scale.convert xScale
+            lap.lapCount |> toFloat |> Scale.convert xScale
 
         dy =
             lap.time |> Scale.convert yScale
@@ -97,7 +97,7 @@ viewLapData color lap =
     g
         [ TypedSvg.Attributes.class [ "lap" ] ]
         [ circle [ cx dx, cy dy, r 2, style colorSetting ] []
-        , text_ [ x dx, y dy ] [ Html.text (lap.lapCount |> String.fromFloat) ]
+        , text_ [ x dx, y dy ] [ Html.text (lap.lapCount |> String.fromInt) ]
         ]
 
 
@@ -105,7 +105,7 @@ drawCurve : History -> Svg msg
 drawCurve history =
     let
         scaleX x =
-            x |> Scale.convert xScale
+            x |> toFloat |> Scale.convert xScale
 
         scaleY y =
             y |> Scale.convert yScale
