@@ -58,12 +58,13 @@ viewLapTimeChart analysis =
                                 histories
                                     |> List.filter (\d -> driver.carNumber == d.carNumber)
                                     |> List.head
-                                    |> Maybe.withDefault (History "" (Driver "" "" "" "" "") [] [])
+                                    |> Maybe.withDefault (History "" (Driver "" "" "" "" "") [] [] (Lap 0 0))
                         in
                         { driver = driver
                         , carNumber = history.carNumber
                         , laps = history.laps
                         , pitStops = history.pitStops
+                        , fastestLap = history.fastestLap
                         }
                     )
     in

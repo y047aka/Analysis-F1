@@ -1,6 +1,6 @@
 module AnalysisTest exposing (all)
 
-import Analysis exposing (Lap, lapDecoder)
+import Analysis exposing (Lap, fastestLap, lapDecoder, personalBest)
 import Expect
 import Json.Decode exposing (decodeString)
 import Test exposing (Test, describe, test)
@@ -9,30 +9,58 @@ import Test exposing (Test, describe, test)
 
 {-
 
-   - [ ] Lap型のデコード
-       - [x] 文字列：{ \"lap\": 20, \"time\": 90.003 } をデコードすると、Lap型を返す
+   - [ ] analysisDecoder
+       - [ ] Lap型のデコード
+           - [x] 文字列：{ \"lap\": 20, \"time\": 90.003 } をデコードすると、Lap型を返す
 
-   - [ ] History型のデコード
+       - [ ] History型のデコード
 
-   - [ ] Analysis型のデコード
+       - [ ] Analysis型のデコード
 
+   - [ ] personalBest
+       - [x] ドライバーの自己ベストラップを検索する
+           - [x] (List Lap)：[ Lap 1 100.0, Lap 2 20.0, Lap 3 30.0 ] を渡すと、Lap型：Lap 2 20.0 を返す
+
+   - [ ] fastestLap
+       - [ ] 各ドライバーの自己ベストから、最も早いラップを検索する
+           - [ ] (List (List Lap))：[ [ Lap 1 100.0 ], [ Lap 2 20.0 ], [ Lap 3 30.0 ] ] を渡すと、Lap型：Lap 2 20.0 を返す
 -}
 
 
 all : Test
 all =
-    describe "analysisDecoder"
-        [ describe "Lap型のデコード"
-            [ test "文字列：{ \"lap\": 20, \"time\": 90.003 } をデコードすると、Lap型を返す" <|
-                \() ->
-                    decodeString lapDecoder "{ \"lap\": 20, \"time\": 90.003 }"
-                        |> (\result ->
-                                case result of
-                                    Ok lap ->
-                                        Expect.equal (Lap 20 90.003) lap
+    describe "Analysis"
+        [ describe "analysisDecoder"
+            [ describe "Lap型のデコード"
+                [ test "文字列：{ \"lap\": 20, \"time\": 90.003 } をデコードすると、Lap型を返す" <|
+                    \() ->
+                        decodeString lapDecoder "{ \"lap\": 20, \"time\": 90.003 }"
+                            |> (\result ->
+                                    case result of
+                                        Ok lap ->
+                                            Expect.equal (Lap 20 90.003) lap
 
-                                    Err error ->
-                                        Expect.equal (Lap 20 90.003) (Lap 0 0)
-                           )
+                                        Err error ->
+                                            Expect.equal (Lap 20 90.003) (Lap 0 0)
+                               )
+                ]
+            ]
+        , describe "personalBest"
+            [ describe "ドライバーの自己ベストラップを検索する"
+                [ test "(List Lap)：[ Lap 1 100.0, Lap 2 20.0, Lap 3 30.0 ] を渡すと、Lap型：Lap 2 20.0 を返す" <|
+                    \() ->
+                        [ Lap 1 100.0, Lap 2 20.0, Lap 3 30.0 ]
+                            |> personalBest
+                            |> Expect.equal (Lap 2 20.0)
+                ]
+            ]
+        , describe "fastestLap"
+            [ describe "各ドライバーの自己ベストから、最も早いラップを検索する"
+                [ test "(List (List Lap))：[ [ Lap 1 100.0 ], [ Lap 2 20.0 ], [ Lap 3 30.0 ] ] を渡すと、Lap型：Lap 2 20.0 を返す" <|
+                    \() ->
+                        [ [ Lap 1 100.0 ], [ Lap 2 20.0 ], [ Lap 3 30.0 ] ]
+                            |> fastestLap
+                            |> Expect.equal (Lap 2 20.0)
+                ]
             ]
         ]
