@@ -78,7 +78,7 @@ viewLapTimeChart analysis =
                 |> Analysis.fastestLap
 
         yScale =
-            yScaleFromDomain ( fastestLap.time, fastestLap.time + 15000 )
+            yScaleFromDomain ( fastestLap.time, fastestLap.time * 1.2 )
     in
     svg [ viewBox 0 0 w h, class [ "laptime-chart" ] ]
         (standings |> List.indexedMap (viewLapHistory yScale))

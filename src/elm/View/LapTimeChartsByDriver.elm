@@ -78,7 +78,7 @@ viewLapTimeChartsByDriver analysis =
                 |> Analysis.fastestLap
 
         yScale =
-            yScaleFromDomain ( fastestLap.time, 97500 )
+            yScaleFromDomain ( fastestLap.time, fastestLap.time * 1.2 )
     in
     ul [] (standings |> List.map (viewLapTimeChart yScale))
 
