@@ -31,9 +31,13 @@ xScale =
     Scale.linear ( padding, w - padding ) ( 0, 60 )
 
 
-yScale : ContinuousScale Float
-yScale =
-    Scale.linear ( h - padding, padding ) ( 85000, 97500 )
+yScaleFromDomain : ( Float, Float ) -> ContinuousScale Float
+yScaleFromDomain =
+    let
+        range =
+            ( h - padding, padding )
+    in
+    Scale.linear range
 
 
 
@@ -67,23 +71,31 @@ viewLapTimeChartsByDriver analysis =
                         , fastestLap = history.fastestLap
                         }
                     )
+
+        fastestLap =
+            histories
+                |> List.map .laps
+                |> Analysis.fastestLap
+
+        yScale =
+            yScaleFromDomain ( fastestLap.time, 97500 )
     in
-    ul [] (standings |> List.map viewLapTimeChart)
+    ul [] (standings |> List.map (viewLapTimeChart yScale))
 
 
-viewLapTimeChart : History -> Html msg
-viewLapTimeChart history =
+viewLapTimeChart : ContinuousScale Float -> History -> Html msg
+viewLapTimeChart yScale history =
     li []
         [ p [] [ text (history.carNumber ++ " " ++ history.driver.name) ]
         , svg [ viewBox 0 0 w h ]
-            [ drawCurve history
-            , g [] (history.laps |> List.map (viewLapData history.driver.teamColor))
+            [ drawCurve yScale history
+            , g [] (history.laps |> List.map (viewLapData yScale history.driver.teamColor))
             ]
         ]
 
 
-viewLapData : String -> Lap -> Svg msg
-viewLapData color lap =
+viewLapData : ContinuousScale Float -> String -> Lap -> Svg msg
+viewLapData yScale color lap =
     let
         dx =
             lap.lapCount |> toFloat |> Scale.convert xScale
@@ -100,8 +112,8 @@ viewLapData color lap =
         ]
 
 
-drawCurve : History -> Svg msg
-drawCurve history =
+drawCurve : ContinuousScale Float -> History -> Svg msg
+drawCurve yScale history =
     let
         scaleX x =
             x |> toFloat |> Scale.convert xScale
