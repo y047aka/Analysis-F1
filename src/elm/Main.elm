@@ -181,13 +181,13 @@ viewPostPage analysis =
                 [ span [ class "season" ] [ text analysis.summary.seasonName ]
                 , text analysis.summary.eventName
                 ]
-            , section [ class "laptime-charts-by-driver" ]
-                [ h1 [] [ text "Lap Time Charts By Driver" ]
-                , viewLapTimeChartsByDriver analysis
-                ]
             , section [ class "laptime-chart" ]
                 [ h1 [] [ text "Lap Time Chart" ]
                 , viewLapTimeChart analysis
+                ]
+            , section [ class "laptime-charts-by-driver" ]
+                [ h1 [] [ text "Lap Time Charts By Driver" ]
+                , viewLapTimeChartsByDriver analysis
                 ]
             ]
         ]

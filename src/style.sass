@@ -99,16 +99,29 @@ section
     font-size: 1.6rem
     font-weight: bold
     text-transform: uppercase
+  
+  svg
+    display: block
 
 section.laptime-charts-by-driver
   ul
     display: grid
     grid-template-columns: 1fr 1fr 1fr 1fr
-    grid-column-gap: 2rem
+    grid-gap: 2rem
     padding: 0
 
     li
+      position: relative
       list-style: none
+
+      p
+        display: inline-block
+        position: absolute
+        top: 0
+        padding: 0 1rem
+        font-size: 1.4rem
+        background: #444
+        color: #FFF
 
   svg
     background: #F7F7F7
