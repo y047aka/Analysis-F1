@@ -23,19 +23,19 @@ h =
     100
 
 
-padding : Float
+padding : { top : Float, left : Float, bottom : Float, right : Float }
 padding =
-    15
+    { top = 20, left = 35, bottom = 15, right = 10 }
 
 
 xScaleFromDomain : ( Float, Float ) -> ContinuousScale Float
 xScaleFromDomain domain =
-    Scale.linear ( padding, w - padding ) domain
+    Scale.linear ( padding.left, w - padding.right ) domain
 
 
 yScaleFromDomain : ( Float, Float ) -> ContinuousScale Float
 yScaleFromDomain domain =
-    Scale.linear ( h - padding, padding ) domain
+    Scale.linear ( h - padding.bottom, padding.top ) domain
 
 
 
@@ -91,11 +91,11 @@ viewLapTimeChart : ContinuousScale Float -> ContinuousScale Float -> History -> 
 viewLapTimeChart xScale yScale history =
     let
         xAxis =
-            g [ class [ "x-axis" ], transform [ Translate 0 (h - padding) ] ]
+            g [ class [ "x-axis" ], transform [ Translate 0 (h - padding.bottom) ] ]
                 [ Axis.bottom [ tickCount 5, tickSizeInner 4, tickSizeOuter 4 ] xScale ]
 
         yAxis =
-            g [ class [ "y-axis" ], transform [ Translate padding 0 ] ]
+            g [ class [ "y-axis" ], transform [ Translate padding.left 0 ] ]
                 [ Axis.left [ tickCount 2, tickSizeInner 3, tickSizeOuter 3 ] yScale ]
     in
     li []
