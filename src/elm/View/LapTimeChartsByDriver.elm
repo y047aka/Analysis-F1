@@ -1,14 +1,16 @@
 module View.LapTimeChartsByDriver exposing (viewLapTimeChartsByDriver)
 
 import Analysis exposing (Analysis, Driver, History, Lap)
+import Axis exposing (tickCount, tickSizeInner, tickSizeOuter)
 import Html exposing (Html, li, p, text, ul)
 import Path
 import Scale exposing (ContinuousScale)
 import Shape
 import TypedSvg exposing (circle, g, svg)
-import TypedSvg.Attributes exposing (class, style, viewBox)
+import TypedSvg.Attributes exposing (class, style, transform, viewBox)
 import TypedSvg.Attributes.InPx exposing (cx, cy, r)
 import TypedSvg.Core exposing (Svg)
+import TypedSvg.Types exposing (Transform(..))
 
 
 w : Float
@@ -23,7 +25,7 @@ h =
 
 padding : Float
 padding =
-    10
+    15
 
 
 xScaleFromDomain : ( Float, Float ) -> ContinuousScale Float
@@ -87,10 +89,21 @@ viewLapTimeChartsByDriver analysis =
 
 viewLapTimeChart : ContinuousScale Float -> ContinuousScale Float -> History -> Html msg
 viewLapTimeChart xScale yScale history =
+    let
+        xAxis =
+            g [ class [ "x-axis" ], transform [ Translate 0 (h - padding) ] ]
+                [ Axis.bottom [ tickCount 5, tickSizeInner 4, tickSizeOuter 4 ] xScale ]
+
+        yAxis =
+            g [ class [ "y-axis" ], transform [ Translate padding 0 ] ]
+                [ Axis.left [ tickCount 2, tickSizeInner 3, tickSizeOuter 3 ] yScale ]
+    in
     li []
         [ p [] [ text (history.carNumber ++ " " ++ history.driver.name) ]
         , svg [ viewBox 0 0 w h ]
-            [ drawCurve xScale yScale history
+            [ xAxis
+            , yAxis
+            , drawCurve xScale yScale history
             , g [] (history.laps |> List.map (viewLapData xScale yScale history.driver.teamColor))
             ]
         ]

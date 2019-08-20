@@ -1,14 +1,16 @@
 module View.LapTimeChart exposing (viewLapTimeChart)
 
 import Analysis exposing (Analysis, Driver, History, Lap)
+import Axis
 import Html exposing (Html)
 import Path
 import Scale exposing (ContinuousScale)
 import Shape
 import TypedSvg exposing (circle, g, svg, text_)
-import TypedSvg.Attributes exposing (class, style, viewBox)
+import TypedSvg.Attributes exposing (class, style, transform, viewBox)
 import TypedSvg.Attributes.InPx exposing (cx, cy, r, x, y)
 import TypedSvg.Core exposing (Svg)
+import TypedSvg.Types exposing (Transform(..))
 
 
 w : Float
@@ -81,17 +83,32 @@ viewLapTimeChart analysis =
 
         yScale =
             yScaleFromDomain ( fastestLap.time, fastestLap.time * 1.2 )
+
+        xAxis =
+            g [ class [ "x-axis" ], transform [ Translate 0 (h - padding) ] ]
+                [ Axis.bottom [] xScale ]
+
+        yAxis =
+            g [ class [ "y-axis" ], transform [ Translate padding 0 ] ]
+                [ Axis.left [] yScale ]
+
+        lapHistories =
+            g []
+                (standings |> List.indexedMap (viewLapHistory xScale yScale))
     in
     svg [ viewBox 0 0 w h, class [ "laptime-chart" ] ]
-        (standings |> List.indexedMap (viewLapHistory xScale yScale))
+        [ xAxis
+        , yAxis
+        , lapHistories
+        ]
 
 
 viewLapHistory : ContinuousScale Float -> ContinuousScale Float -> Int -> History -> Html msg
 viewLapHistory xScale yScale i history =
     g [ class [ "history" ] ]
-        [ text_ [ x 10, y (toFloat i * 20 + 15) ] [ Html.text history.carNumber ]
-        , text_ [ x 35, y (toFloat i * 20 + 15) ] [ Html.text history.driver.name ]
-        , drawCurve xScale yScale history
+        [ --   text_ [ x 10, y (toFloat i * 20 + 15) ] [ Html.text history.carNumber ]
+          -- , text_ [ x 35, y (toFloat i * 20 + 15) ] [ Html.text history.driver.name ]
+          drawCurve xScale yScale history
         , g [] (history.laps |> List.map (viewLapData xScale yScale history.driver.teamColor))
         ]
 
