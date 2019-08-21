@@ -8,6 +8,7 @@ import Html.Attributes exposing (class, href, target)
 import Http
 import Route exposing (Route)
 import Url
+import View.GapChart exposing (viewGapChart)
 import View.LapTimeChart exposing (viewLapTimeChart)
 import View.LapTimeChartsByDriver exposing (viewLapTimeChartsByDriver)
 
@@ -180,6 +181,10 @@ viewPostPage analysis =
             [ h1 []
                 [ span [ class "season" ] [ text analysis.summary.seasonName ]
                 , text analysis.summary.eventName
+                ]
+            , section [ class "gap-chart" ]
+                [ h1 [] [ text "Gap Chart" ]
+                , viewGapChart analysis
                 ]
             , section [ class "laptime-chart" ]
                 [ h1 [] [ text "Lap Time Chart" ]
