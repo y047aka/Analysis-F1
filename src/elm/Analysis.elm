@@ -81,12 +81,20 @@ driverDecoder =
 
 historyDecoder : Decode.Decoder History
 historyDecoder =
-    Decode.succeed History
+    Decode.succeed toHistory
         |> required "car" string
-        |> hardcoded (Driver "" "" "" "" "")
         |> required "lapTime" (Decode.list lapDecoder)
         |> optional "pit" (Decode.list int) []
-        |> hardcoded (Lap 0 0 0)
+
+
+toHistory : String -> List Lap -> List Int -> History
+toHistory carNumber laps pitStops =
+    { carNumber = carNumber
+    , driver = Driver "" "" "" "" ""
+    , laps = laps |> lapsWithElapsed
+    , pitStops = pitStops
+    , fastestLap = laps |> personalBest
+    }
 
 
 lapDecoder : Decode.Decoder Lap
