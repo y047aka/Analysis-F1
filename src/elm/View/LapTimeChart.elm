@@ -96,7 +96,7 @@ viewLapTimeChart analysis =
             g []
                 (standings |> List.indexedMap (viewLapHistory xScale yScale))
     in
-    svg [ viewBox 0 0 w h, class [ "laptime-chart" ] ]
+    svg [ viewBox 0 0 w h ]
         [ xAxis
         , yAxis
         , lapHistories

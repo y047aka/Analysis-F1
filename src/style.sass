@@ -145,39 +145,40 @@ section.laptime-charts-by-driver
         fill: #999
         font-size: 0.6rem
 
-svg.laptime-chart
-  background: #F7F7F7
+section.laptime-chart
+  svg
+    background: #F7F7F7
 
-  g.history
-    path
-      fill: none
-      stroke: rgba(0, 0, 0, 0.5)
-
-    text
-      fill: rgba(0, 0, 0, 0.5)
-      font-size: 1.2rem
-
-    g.lap
-      circle
-        fill: rgba(0, 0, 0, 0.5)
-        stroke: #F7F7F7
+    g.history
+      path
+        fill: none
+        stroke: rgba(0, 0, 0, 0.5)
 
       text
-        display: none
-        cursor: default
-        font-size: 0.8rem
+        fill: rgba(0, 0, 0, 0.5)
+        font-size: 1.2rem
 
-      &:hover
+      g.lap
+        circle
+          fill: rgba(0, 0, 0, 0.5)
+          stroke: #F7F7F7
+
         text
-          display: block
-  
-  g.x-axis, g.y-axis
-    line, path
-      stroke: #999
-      stroke-width: 1
+          display: none
+          cursor: default
+          font-size: 0.8rem
 
-    text
-      fill: #999
+        &:hover
+          text
+            display: block
+    
+    g.x-axis, g.y-axis
+      line, path
+        stroke: #999
+        stroke-width: 1
+
+      text
+        fill: #999
 
 footer.site-footer
   padding: 3rem 0
