@@ -1,8 +1,9 @@
-module Analysis exposing (Analysis, Driver, History, Lap, analysisDecoder, fastestLap, getAnalysis, lapDecoder, personalBest)
+module Analysis exposing (Analysis, Driver, History, Lap, analysisDecoder, fastestLap, getAnalysis, lapDecoder, lapsWithElapsed, personalBest)
 
 import Http
 import Json.Decode as Decode exposing (at, float, int, string)
 import Json.Decode.Pipeline exposing (custom, hardcoded, optional, required)
+import List.Extra
 
 
 
@@ -106,6 +107,23 @@ getAnalysis toMsg raceName =
         { url = "https://y047aka.github.io/MotorSportsData/analysis/F1/2019/" ++ raceName ++ "/raceHistoryAnalytics.json"
         , expect = Http.expectJson toMsg analysisDecoder
         }
+
+
+lapsWithElapsed : List Lap -> List Lap
+lapsWithElapsed laps =
+    let
+        lapWithElapsed : Int -> Lap -> Lap
+        lapWithElapsed i lap =
+            { lapCount = lap.lapCount
+            , time = lap.time
+            , elapsed =
+                laps
+                    |> List.Extra.takeWhile (\d -> i + 1 >= d.lapCount)
+                    |> List.map .time
+                    |> List.sum
+            }
+    in
+    laps |> List.indexedMap lapWithElapsed
 
 
 personalBest : List Lap -> Lap
