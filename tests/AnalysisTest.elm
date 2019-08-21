@@ -22,8 +22,8 @@ import Test exposing (Test, describe, test)
            - [x] (List Lap)：[ Lap 1 100.0, Lap 2 20.0, Lap 3 30.0 ] を渡すと、Lap型：Lap 2 20.0 を返す
 
    - [ ] fastestLap
-       - [ ] 各ドライバーの自己ベストから、最も早いラップを検索する
-           - [ ] (List (List Lap))：[ [ Lap 1 100.0 ], [ Lap 2 20.0 ], [ Lap 3 30.0 ] ] を渡すと、Lap型：Lap 2 20.0 を返す
+       - [x] 各ドライバーの自己ベストから、最も早いラップを検索する
+           - [x] (List (List Lap))：[ [ Lap 1 100.0 ], [ Lap 2 20.0 ], [ Lap 3 30.0 ] ] を渡すと、Lap型：Lap 2 20.0 を返す
 -}
 
 
