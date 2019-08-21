@@ -60,7 +60,7 @@ viewLapTimeChartsByDriver analysis =
                                 histories
                                     |> List.filter (\d -> driver.carNumber == d.carNumber)
                                     |> List.head
-                                    |> Maybe.withDefault (History "" (Driver "" "" "" "" "") [] [] (Lap 0 0))
+                                    |> Maybe.withDefault (History "" (Driver "" "" "" "" "") [] [] (Lap 0 0 0))
                         in
                         { driver = driver
                         , carNumber = history.carNumber

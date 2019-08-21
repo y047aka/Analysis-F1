@@ -44,6 +44,7 @@ type alias History =
 type alias Lap =
     { lapCount : Int
     , time : Float
+    , elapsed : Float
     }
 
 
@@ -84,7 +85,7 @@ historyDecoder =
         |> hardcoded (Driver "" "" "" "" "")
         |> required "lapTime" (Decode.list lapDecoder)
         |> optional "pit" (Decode.list int) []
-        |> hardcoded (Lap 0 0)
+        |> hardcoded (Lap 0 0 0)
 
 
 lapDecoder : Decode.Decoder Lap
@@ -92,6 +93,7 @@ lapDecoder =
     Decode.succeed Lap
         |> required "lap" int
         |> required "time" float
+        |> hardcoded 0
 
 
 
@@ -110,7 +112,7 @@ personalBest : List Lap -> Lap
 personalBest =
     List.sortBy .time
         >> List.head
-        >> Maybe.withDefault (Lap 0 0)
+        >> Maybe.withDefault (Lap 0 0 0)
 
 
 fastestLap : List (List Lap) -> Lap
@@ -118,4 +120,4 @@ fastestLap =
     List.map personalBest
         >> List.sortBy .time
         >> List.head
-        >> Maybe.withDefault (Lap 0 0)
+        >> Maybe.withDefault (Lap 0 0 0)
