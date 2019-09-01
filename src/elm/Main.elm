@@ -160,6 +160,7 @@ viewTopPage =
             , "08_France"
             , "09_Austria"
             , "12_Hungary"
+            , "13_Belgium"
             ]
 
         viewListItem raceName =
